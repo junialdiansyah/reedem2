@@ -6,6 +6,8 @@ from app.service.auth import AuthInstance
 from app.type_dict import PaymentItem
 from app.client.balance import settlement_balance
 
+_purchase_cache = {}
+
 # Purchase
 def purchase_by_family(
     family_code: str,
@@ -201,12 +203,18 @@ def purchase_loop(
     api_key = AuthInstance.api_key
     tokens: dict = AuthInstance.get_active_tokens() or {}
 
-    # Find the package variant and option from family data
-    family_data = get_family(api_key, tokens, family_code)
+    # --- Caching logic ---
+    family_data = _purchase_cache.get(family_code)
     if not family_data:
-        print(f"Failed to get family data for code: {family_code}.")
-        pause()
-        return
+        print("Fetching package family...")
+        family_data = get_family(api_key, tokens, family_code)
+        if not family_data:
+            print(f"Failed to get family data for code: {family_code}.")
+            pause()
+            return
+        _purchase_cache[family_code] = family_data
+    else:
+        print("Fetching package family... (from cache)")
 
     target_variant = None
     target_option = None
@@ -226,29 +234,38 @@ def purchase_loop(
 
     variant_code = target_variant["package_variant_code"]
 
+    decoy_data = None
     if use_decoy:
-        # Balance; Decoy XCP
-        url = "https://me.mashu.lol/pg-decoy-xcp.json"
-        
-        response = requests.get(url, timeout=30)
-        if response.status_code != 200:
-            print("Gagal mengambil data decoy package.")
-            pause()
-            return None
-        
-        decoy_data = response.json()
-        decoy_package_detail = get_package_details(
-            api_key,
-            tokens,
-            decoy_data["family_code"],
-            decoy_data["variant_code"],
-            decoy_data["order"],
-            decoy_data["is_enterprise"],
-            decoy_data["migration_type"],
-        )
-        
-        balance_treshold = decoy_package_detail["package_option"]["price"]
-        print(f"Pastikan sisa balance KURANG DARI Rp{balance_treshold}!!!")
+        decoy_data = _purchase_cache.get("decoy_data")
+        if not decoy_data:
+            print("Fetching decoy package...")
+            # Balance; Decoy XCP
+            url = "https://me.mashu.lol/pg-decoy-xcp.json"
+            
+            try:
+                response = requests.get(url, timeout=30)
+                response.raise_for_status()
+                decoy_data = response.json()
+                _purchase_cache["decoy_data"] = decoy_data
+
+                decoy_package_detail = get_package_details(
+                    api_key,
+                    tokens,
+                    decoy_data["family_code"],
+                    decoy_data["variant_code"],
+                    decoy_data["order"],
+                    decoy_data["is_enterprise"],
+                    decoy_data["migration_type"],
+                )
+                
+                balance_treshold = decoy_package_detail["package_option"]["price"]
+                print(f"Pastikan sisa balance KURANG DARI Rp{balance_treshold}!!!")
+            except requests.RequestException as e:
+                print(f"Gagal mengambil data decoy package: {e}")
+                pause()
+                return None
+        else:
+            print("Fetching decoy package... (from cache)")
 
     tokens = AuthInstance.get_active_tokens()
     
@@ -280,7 +297,7 @@ def purchase_loop(
         )
     )
 
-    if use_decoy:
+    if use_decoy and decoy_data:
         decoy_package_detail = get_package_details(
             api_key,
             tokens,
@@ -302,8 +319,10 @@ def purchase_loop(
         )
 
     overwrite_amount = target_package_detail["package_option"]["price"]
-    if use_decoy:
-        overwrite_amount += decoy_package_detail["package_option"]["price"]
+    if use_decoy and decoy_data:
+        # Safely access decoy price from the second payment item if it exists
+        if len(payment_items) > 1:
+            overwrite_amount += payment_items[1]['item_price']
 
     try:
         res = settlement_balance(
