@@ -13,20 +13,19 @@ from app.menus.account import show_account_menu
 from app.menus.package import fetch_my_packages, get_packages_by_family
 from app.menus.hot import show_hot_menu, show_hot_menu2
 from app.service.sentry import enter_sentry_mode
-from app.menus.purchase import purchase_by_family, purchase_loop
+from app.menus.purchase import purchase_by_family
+from app.util import get_api_key
+
+WIDTH = 55
 
 def show_main_menu(profile):
     clear_screen()
-    expired_at_dt = datetime.fromtimestamp(profile["balance_expired_at"]).strftime("%Y-%m-%d %H:%M:%S")
-    
-    print("-------------------------------------------------------")
-    print("Informasi Akun")
-    print(f"Nomor: {profile['number']}")
-    print(f"Type: {profile['subscription_type']}({profile['subscriber_id']})")
-    print(f"Pulsa: Rp {profile['balance']}")
-    print(f"{profile['point_info']}")
-    print(f"Masa aktif: {expired_at_dt}")
-    print("-------------------------------------------------------")
+    print("=" * WIDTH)
+    expired_at_dt = datetime.fromtimestamp(profile["balance_expired_at"]).strftime("%Y-%m-%d")
+    print(f"Nomor: {profile['number']} | Type: {profile['subscription_type']}".center(WIDTH))
+    print(f"Pulsa: Rp {profile['balance']} | Aktif sampai: {expired_at_dt}".center(WIDTH))
+    print(f"{profile['point_info']}".center(WIDTH))
+    print("=" * WIDTH)
     print("Menu:")
     print("1. Login/Ganti akun")
     print("2. Lihat Paket Saya")
@@ -35,17 +34,13 @@ def show_main_menu(profile):
     print("5. Beli Paket Berdasarkan Family Code")
     print("6. Riwayat Transaksi")
     print("7. [Test] Purchase all packages in family code")
-    print("8. Bebas Puas TIKTOK ADD 42GB (no.1)")
-    print("9. Bebas Puas TIKTOK ADD 40GB (no.3)")
-    print("10. Kuota Pelanggan Baru 10GB + 30H (Accumulate) (no.1)")
-    print("11. Bonus Kuota Utama 15GB (no.52)")
-    print("12. Bot Akrab (no.92)")
     print("00. Bookmark Paket")
     print("99. Tutup aplikasi")
     print("-------------------------------------------------------")
 
 show_menu = True
 def main():
+    AuthInstance.api_key = get_api_key()
     
     while True:
         active_user = AuthInstance.get_active_user()
@@ -108,41 +103,6 @@ def main():
                 use_decoy = input("Use decoy package? (y/n): ").lower() == 'y'
                 pause_on_success = input("Pause on each successful purchase? (y/n): ").lower() == 'y'
                 purchase_by_family(family_code, use_decoy, pause_on_success)
-            elif choice == "8":
-                while True:
-                    purchase_loop(
-                        family_code='8080ddcf-18c5-4d6d-86a4-89eb8ca5f2d1',
-                        order=1,
-                        use_decoy=True
-                    )
-            elif choice == "9":
-                while True:
-                    purchase_loop(
-                        family_code='8080ddcf-18c5-4d6d-86a4-89eb8ca5f2d1',
-                        order=3,
-                        use_decoy=True
-                    )
-            elif choice == "10":
-                while True:
-                    purchase_loop(
-                        family_code='0069ab97-3e54-41ef-87ea-807621d1922c',
-                        order=1,
-                        use_decoy=True
-                    )
-            elif choice == "11":
-                while True:
-                    purchase_loop(
-                        family_code='0069ab97-3e54-41ef-87ea-807621d1922c',
-                        order=52,
-                        use_decoy=True
-                    )
-            elif choice == "12":
-                while True:
-                    purchase_loop(
-                        family_code='0069ab97-3e54-41ef-87ea-807621d1922c',
-                        order=92,
-                        use_decoy=True
-                    )
             elif choice == "00":
                 show_bookmark_menu()
             elif choice == "99":
