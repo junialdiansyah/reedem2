@@ -48,6 +48,21 @@ def verify_api_key(api_key: str, *, timeout: float = 10.0) -> bool:
         print(f"Failed to verify API key: {e}")
         return False
 
+def get_user_info(api_key: str, *, timeout: float = 10.0) -> dict:
+    """
+    Fetch user info from the API.
+    Raises an exception if the request fails or the API key is invalid.
+    """
+    try:
+        url = f"https://crypto.mashu.lol/api/verify?key={api_key}"
+        resp = requests.get(url, timeout=timeout)
+        if resp.status_code == 200:
+            return resp.json()
+        else:
+            raise Exception(f"Failed to fetch user info: {resp.status_code} {resp.text}")
+    except requests.RequestException as e:
+        raise Exception(f"Network error while fetching user info: {e}") from e
+
 def ensure_api_key() -> str:
     """
     Load api.key if present; otherwise prompt the user.

@@ -25,15 +25,11 @@ def show_main_menu(active_user):
     print("2. [Test] Purchase all packages in family code")
     print("-------------------------------------------------------")
     print("List Bot Auto Looping:")
-    print("3. EDu/confifrence")
-    print("4. Xtra Unli Turbo Youtube (15000)")
-    print("5. Xtra Unli Turbo Tiktok (30000 or 50000)")
-    print("")
-    print("Note : setelah Pembelian turbo premium sukses, tunggu 10")
-    print("       lalu lanjut beli Tiktok")
-    print("-------------------------------------------------------")
+    print("3. Bonus Kuota Malam 72GB")
+    print("4. Bebas Puas TIKTOK/YT ADD-ON 39GB")
+    print("5. Kuota Pelanggan Baru 10GB + 30H (Accumulate)")
     print("6. Bonus Kuota Utama 15GB")
-    print("7. YT unli 3 Hari")
+    print("7. Bonus Kuota Utama 45GB")
     print("8. Mode Custom (family code dan nomer order)")
     print("-------------------------------------------------------")
     print("9. Bookmark Family Code")
@@ -71,8 +67,8 @@ def main():
                 pause_on_success = input("Aktifkan mode pause? (y/n): ").lower() == 'y'
                 while True:
                     purchase_loop(
-                        family_code='5d63dddd-4f90-4f4c-8438-2f005c20151f',
-                        order=1,
+                        family_code='8080ddcf-18c5-4d6d-86a4-89eb8ca5f2d1',
+                        order=26,
                         use_decoy=True,
                         delay=delay,
                         pause_on_success=pause_on_success
@@ -82,8 +78,8 @@ def main():
                 pause_on_success = input("Aktifkan mode pause? (y/n): ").lower() == 'y'
                 while True:
                     purchase_loop(
-                        family_code='08a3b1e6-8e78-4e45-a540-b40f06871cfe',
-                        order=7,
+                        family_code='8080ddcf-18c5-4d6d-86a4-89eb8ca5f2d1',
+                        order=3,
                         use_decoy=True,
                         delay=delay,
                         pause_on_success=pause_on_success
@@ -93,8 +89,8 @@ def main():
                 pause_on_success = input("Aktifkan mode pause? (y/n): ").lower() == 'y'
                 while True:
                     purchase_loop(
-                        family_code='08a3b1e6-8e78-4e45-a540-b40f06871cfe',
-                        order=6,
+                        family_code='0069ab97-3e54-41ef-87ea-807621d1922c',
+                        order=1,
                         use_decoy=True,
                         delay=delay,
                         pause_on_success=pause_on_success
@@ -115,8 +111,8 @@ def main():
                 pause_on_success = input("Aktifkan mode pause? (y/n): ").lower() == 'y'
                 while True:
                     purchase_loop(
-                        family_code='b50cef3e-fcd0-4699-83a9-6f5740b7ef31',
-                        order=24,
+                        family_code='5412b964-474e-42d3-9c86-f5692da627db',
+                        order=64,
                         use_decoy=True,
                         delay=delay,
                         pause_on_success=pause_on_success
