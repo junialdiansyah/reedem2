@@ -35,7 +35,7 @@ def show_main_menu(profile):
     print("6. Riwayat Transaksi")
     print("7. [Test] Purchase all packages in family code")
     print("00. Bookmark Paket")
-    print("99. Tutup aplikasi")
+    print("99. Back")
     print("-------------------------------------------------------")
 
 show_menu = True
